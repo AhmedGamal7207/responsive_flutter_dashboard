@@ -1,4 +1,5 @@
 import 'package:fitness_dashboard/data/health_details.dart';
+import 'package:fitness_dashboard/util/responsive.dart';
 import 'package:fitness_dashboard/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
 
@@ -14,8 +15,8 @@ class ActivityDetailsCard extends StatelessWidget {
       shrinkWrap: true,
       physics: const ScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        crossAxisSpacing: 15,
+        crossAxisCount: Responsive.isMobile(context) ? 2 : 4,
+        crossAxisSpacing: Responsive.isMobile(context) ? 15 : 12,
         mainAxisSpacing: 12,
       ),
       itemBuilder:

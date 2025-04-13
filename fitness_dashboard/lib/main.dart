@@ -1,5 +1,6 @@
 import 'package:fitness_dashboard/constant/constants.dart';
 import 'package:fitness_dashboard/screens/main_screen.dart';
+import 'package:fitness_dashboard/util/responsive.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -18,11 +19,14 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: backgroundColor,
         brightness: Brightness.dark,
       ),
-      home: SelectableRegion(
-        focusNode: FocusNode(),
-        selectionControls: materialTextSelectionControls,
-        child: MainScreen(),
-      ),
+      home:
+          Responsive.isMobile(context)
+              ? MainScreen()
+              : SelectableRegion(
+                focusNode: FocusNode(),
+                selectionControls: materialTextSelectionControls,
+                child: MainScreen(),
+              ),
     );
   }
 }

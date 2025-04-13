@@ -1,3 +1,4 @@
+import 'package:fitness_dashboard/util/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:fitness_dashboard/widgets/dashboard_widget.dart';
@@ -14,7 +15,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int selectedIndex = 0;
   bool isLoading = true;
-  bool isSidebarVisible = true;
 
   @override
   void initState() {
@@ -26,7 +26,10 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       isLoading = true;
     });
+
+    // Simulate a 2-second loading period
     await Future.delayed(const Duration(seconds: 2));
+
     setState(() {
       isLoading = false;
     });
@@ -38,14 +41,8 @@ class _MainScreenState extends State<MainScreen> {
     });
 
     if (index == 0) {
-      simulateLoading();
+      simulateLoading(); // Only show loading when Dashboard is re-selected
     }
-  }
-
-  void toggleSidebar() {
-    setState(() {
-      isSidebarVisible = !isSidebarVisible;
-    });
   }
 
   @override
@@ -66,57 +63,31 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       content = const EmptyScreen();
     }
+    final isDesktop = Responsive.isDesktop(context);
 
     return Scaffold(
+      drawer:
+          !isDesktop
+              ? SizedBox(
+                width: 250,
+                child: SideMenuWidget(
+                  selectedIndex: selectedIndex,
+                  onItemTap: handleMenuTap,
+                ),
+              )
+              : null,
       body: SafeArea(
-        child: Stack(
+        child: Row(
           children: [
-            // Sidebar - Slide in/out
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              top: 0,
-              bottom: 0,
-              left: isSidebarVisible ? 0 : -220,
-              child: Container(
-                width: 220,
-                color: Colors.white, // or any background color
+            if (isDesktop)
+              Expanded(
+                flex: 2,
                 child: SideMenuWidget(
                   selectedIndex: selectedIndex,
                   onItemTap: handleMenuTap,
                 ),
               ),
-            ),
-
-            // Main content area
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              left: isSidebarVisible ? 220 : 0,
-              top: 0,
-              right: 0,
-              bottom: 0,
-              child: Stack(
-                children: [
-                  content,
-                  Positioned(
-                    bottom: 16,
-                    left: 26,
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: FloatingActionButton(
-                        backgroundColor: Colors.white,
-                        onPressed: toggleSidebar,
-                        child: Icon(
-                          isSidebarVisible ? Icons.arrow_back : Icons.menu,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            Expanded(flex: 10, child: content),
           ],
         ),
       ),
